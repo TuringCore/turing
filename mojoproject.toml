@@ -1,0 +1,9 @@
+[project]
+name = "turing"
+version = "0.1.0"
+description = "Demonstrative Mojo Bayesian framework with HKT-style constraints"
+license = "BSD-3-Clause"
+
+[tool.demo]
+entrypoint = "src/main.mojo"
+
