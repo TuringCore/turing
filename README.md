@@ -55,6 +55,18 @@ In probabilistic recommenders, this gives three major benefits:
 | Backend-agnostic execution | `HKTInferenceEngine[T]` and `ComputeTarget` separate model semantics from execution target. | Lets the same model graph run on CPU today and GPU-oriented paths as backends mature. |
 | Modular ecosystem design | Core contracts live in `src/`; future domain modules can plug in through stable typed interfaces. | Enables community collaboration without sacrificing compatibility or reproducibility. |
 
+## Summarized architecture layout (social-media recommender)
+
+| Layer | Responsibility | Example discipline modules |
+| --- | --- | --- |
+| Signal ingestion | Collect interaction events (likes, follows, dwell, skips) and normalize them into typed signals. | Core platform adapters (event streams, feature extraction). |
+| Domain priors and dynamics | Contribute probabilistic priors and constraints that describe how user/item states evolve. | **Physics:** gravity/temperature-style trend dynamics.<br>**Chemistry:** lifespan/barrier-style decay and interaction kinetics.<br>**Biology:** evolution/memory-style adaptation and retention. |
+| Bayesian composition | Fuse priors with fresh evidence into compatible posteriors using kind-safe typed containers. | `KindTag`, `BayesianScore[K]`, and future module combinators (`map`/`zip`/`flat_map`). |
+| Ranking and serving | Convert posterior relevance and uncertainty into candidate ranking decisions. | Feed ranking policies, exploration/exploitation controls, and safety-aware serving. |
+| Compile and execution targets | Lower the same typed graph to backend-specific kernels while preserving semantics. | `HKTInferenceEngine[T]` + `ComputeTarget` (`CPU` today, GPU-oriented paths next). |
+
+In practice, each discipline team can ship its module independently (for example via submodules), while the type system enforces composition contracts before deployment.
+
 ## Sample
 
 ```mojo
