@@ -1,18 +1,22 @@
 # Contributing
 
-Thanks for helping build this project.
+Thanks for helping improve `turing`.
 
-## Ways to contribute
+## Scope of this repository
 
-- Improve the Mojo probabilistic-programming framework in `src/hkt_probprog.mojo`.
-- Add new examples under `examples/`.
-- Add tests under `tests/`.
-- Improve docs and architecture notes (`README.md`, `AGENTS.md`).
+`/turing` is a library-first repository. Prioritize:
+
+- Safe, typed probabilistic abstractions in `src/hkt_probprog.mojo`.
+- Small, clear examples in `examples/`.
+- Deterministic behavior checks in `tests/`.
+- Practical documentation updates in `README.md`.
+
+Avoid broad application-specific logic here; put app behavior in consumer repos (for example `/bluesky`).
 
 ## Local setup
 
 1. Install Mojo from the official Modular toolchain.
-2. From the repository root, run the demo and tests:
+2. From this repository root, run:
 
 ```zsh
 mojo src/main.mojo
@@ -20,45 +24,31 @@ mojo examples/social_reco_demo.mojo
 mojo tests/test_hkt_demo.mojo
 ```
 
-If Mojo is not installed, open a draft PR anyway with code/docs; maintainers can help validate runtime behavior.
+If Mojo is not installed, open a draft PR with code/docs and call out unverified runtime behavior.
 
 ## Coding guidelines
 
-- Keep code idiomatic Mojo and prefer clear, small abstractions.
-- Preserve HKT-style type safety patterns in `BayesianScore[K]` and `HKTInferenceEngine[T]`.
-- Keep APIs additive and backward-compatible when possible.
+- Keep APIs conservative and additive.
+- Preserve type-safety patterns in `KindTag`, `BayesianScore[K]`, and `HKTInferenceEngine[T]`.
+- Keep compile-target semantics explicit via `ComputeTarget`.
 - Use ASCII unless a file already requires Unicode.
 - Add brief comments only when logic is non-obvious.
 
 ## Tests and validation
 
 - Add or update tests for behavior changes.
-- Include at least one positive path example for new model features.
-- If changing math, include expected-value checks similar to `tests/test_hkt_demo.mojo`.
+- If changing math, include explicit expected-value checks.
+- Prefer small, deterministic inputs over opaque random tests.
 
 ## Commit and PR expectations
 
 - Use focused commits with descriptive messages.
-- Open a PR with:
+- In PRs, include:
   - what changed,
   - why it changed,
-  - how to run/verify,
+  - how to run and verify,
   - known limitations.
-- Link related issues when relevant.
-
-## Design process
-
-For substantial architecture changes, open an issue first and reference `AGENTS.md`.
-
-Suggested issue labels:
-
-- `kind/type-system`
-- `inference`
-- `backend-gpu`
-- `docs`
-- `good-first-issue`
 
 ## Community
 
-Be respectful, constructive, and explicit about assumptions. This project is intentionally collaborative and cross-disciplinary.
-
+Be respectful, precise, and explicit about assumptions so multiple contributors can collaborate safely.

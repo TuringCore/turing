@@ -4,79 +4,47 @@
 ![Language](https://img.shields.io/badge/language-Mojo-orange)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 
-Inspired by [Turing.jl](https://github.com/TuringLang/Turing.jl), this project explores a simple question:
+`/turing` is a focused Mojo library for conservative Bayesian probabilistic programming.
 
-Can we compile arbitrary Mojo model code into a holistic recommender system that runs across heterogeneous compute targets?
+The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, safe update semantics, and a compile seam that makes execution targets explicit.
 
-The long-term use case is a monorepo with curated git submodules from contributors across domains, composed into one real recommender system driven by community engagement.
+## Why this library is conservative by design
 
-The vision is intentionally ambitious: world-renowned physicists maintaining gravity and temperature modules, chemists maintaining lifespan and barrier modules, biologists maintaining evolution and memory modules, all compiled to a nightly binary with strict higher-kinded-type-style guarantees.
+- Large probabilistic systems become fragile when teams mix incompatible signals.
+- `KindTag` and `BayesianScore[K]` keep signal families separated at compile time.
+- `HKTInferenceEngine[T]` makes compute target selection explicit (`CPU`, `GPU`) without changing model math.
+- The API limits moving parts so contributors can add evidence updates without rewriting infrastructure.
 
-I am actively seeking collaborators, so please do not hesitate to reach out at [jordanrule@gmail.com](mailto:jordanrule@gmail.com).
+## Type system and Mojo compile system
 
-_____
+This project relies on both language-level typing and Mojo's compilation model:
 
-This repository is a demonstrative Mojo framework for Bayesian probabilistic programming with type-safe composition and a backend seam for CPU/GPU lowering.
+- **Type constraints:** `KindTag` and `BayesianScore[K]` prevent accidental cross-domain composition.
+- **Target specialization:** `HKTInferenceEngine[T]` binds behavior to a `ComputeTarget` at compile time.
+- **Compile seam:** `compile_kernel(...)` marks where typed probabilistic logic can lower to target-specific kernels.
 
-## Why HKT-style constraints matter
+Together, these controls reduce integration risk in multi-contributor model repos.
 
-In Haskell/Scala, higher-kinded types (HKTs) let you express constraints over *type constructors* (for example, "a probability container parameterized by a domain kind") rather than only over concrete types.
+## Practical applications
 
-Mojo does not currently expose full HKT syntax, so this project models the same intent using generic wrappers and traits:
+The same pattern applies across domains where uncertainty-aware scoring matters:
 
-- `KindTag` marks semantic domains (for example, `FeatureSignal`, `TrustSignal`).
-- `BayesianScore[K]` binds a probabilistic score to one domain kind `K`.
-- `HKTInferenceEngine[T]` binds inference behavior to a compute target `T` (`CPU` or `GPU`).
+- **Finance:** risk scoring, fraud suspicion priors, and confidence-weighted market signals.
+- **Healthcare:** triage prioritization, readmission risk estimates, and noisy-signal fusion.
+- **Operations:** demand forecasting, incident likelihood updates, and resource balancing.
+- **Recommendations:** feed ranking, candidate reweighting, and exploration/exploitation control.
 
-This is important because it prevents invalid composition at compile time. For example, if one module outputs a trust-domain posterior and another expects a feature-domain score, the type system can reject that composition before it reaches production ranking.
+## Repository contents
 
-In probabilistic recommenders, this gives three major benefits:
+- `src/hkt_probprog.mojo`: core library types and inference engine.
+- `src/main.mojo`: minimal smoke demo for local verification.
+- `examples/social_reco_demo.mojo`: well-documented library usage example.
+- `tests/test_hkt_demo.mojo`: posterior update correctness test.
 
-- **Safer module composition:** independently maintained modules can only connect when kinds are compatible.
-- **Stronger Bayesian pipelines:** prior, evidence, and posterior updates stay attached to the correct signal family.
-- **Portable execution:** model semantics remain stable while lowering to different compute backends.
-
-## What this demo includes
-
-- `src/hkt_probprog.mojo`: core mini-framework (typed priors, posterior updates, and compute-target abstraction).
-- `src/main.mojo`: minimal executable that computes a posterior recommendation score.
-- `examples/social_reco_demo.mojo`: social-media flavored ranking demonstration.
-- `tests/test_hkt_demo.mojo`: lightweight posterior-update correctness test.
-- `CONTRIBUTING.md`: contributor workflow, coding standards, and PR expectations.
-- `AGENTS.md`: future design considerations and architecture roadmap.
-- `LICENSE`: BSD 3-Clause license.
-
-## Design principles
-
-| Principle | What it means in this repo | Why it matters for recommenders |
-| --- | --- | --- |
-| Type-safe composition | `BayesianScore[K]` and `KindTag` keep probabilistic signals domain-specific. | Prevents invalid module wiring across independently maintained components. |
-| Bayesian-first modeling | Prior + evidence updates produce posterior relevance with explicit uncertainty. | Improves ranking decisions when data is sparse, noisy, or changing. |
-| Backend-agnostic execution | `HKTInferenceEngine[T]` and `ComputeTarget` separate model semantics from execution target. | Lets the same model graph run on CPU today and GPU-oriented paths as backends mature. |
-| Modular ecosystem design | Core contracts live in `src/`; future domain modules can plug in through stable typed interfaces. | Enables community collaboration without sacrificing compatibility or reproducibility. |
-
-## Summarized architecture layout (social-media recommender)
-
-| Layer | Responsibility | Example discipline modules |
-| --- | --- | --- |
-| Signal ingestion | Collect interaction events (likes, follows, dwell, skips) and normalize them into typed signals. | Core platform adapters (event streams, feature extraction). |
-| Domain priors and dynamics | Contribute probabilistic priors and constraints that describe how user/item states evolve. | **Physics:** gravity/temperature-style trend dynamics.<br>**Chemistry:** lifespan/barrier-style decay and interaction kinetics.<br>**Biology:** evolution/memory-style adaptation and retention. |
-| Bayesian composition | Fuse priors with fresh evidence into compatible posteriors using kind-safe typed containers. | `KindTag`, `BayesianScore[K]`, and future module combinators (`map`/`zip`/`flat_map`). |
-| Ranking and serving | Convert posterior relevance and uncertainty into candidate ranking decisions. | Feed ranking policies, exploration/exploitation controls, and safety-aware serving. |
-| Compile and execution targets | Lower the same typed graph to backend-specific kernels while preserving semantics. | `HKTInferenceEngine[T]` + `ComputeTarget` (`CPU` today, GPU-oriented paths next). |
-
-In practice, each discipline team can ship its module independently (for example via submodules), while the type system enforces composition contracts before deployment.
-
-## Sample
+## Example
 
 ```mojo
-from src.hkt_probprog import (
-    CPU,
-    BayesianScore,
-    FeatureSignal,
-    GaussianPrior,
-    HKTInferenceEngine,
-)
+from src.hkt_probprog import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
 
 fn main() raises:
     let engine = HKTInferenceEngine[CPU]()
@@ -85,12 +53,11 @@ fn main() raises:
         evidence_weight=0.0,
     )
 
-    # User engaged with science content above baseline.
     score = engine.observe(score, observed=0.82, confidence=0.75)
-    print("Posterior relevance:", score.posterior_mean())
+    print("target:", engine.target_label())
+    print("posterior relevance:", score.posterior_mean())
+    print(engine.compile_kernel(score))
 ```
-
-The update combines prior belief and observed evidence into a posterior relevance score. In production ranking, higher posterior means a stronger estimate that the user wants similar content next.
 
 ## Quick start
 
@@ -100,9 +67,6 @@ mojo examples/social_reco_demo.mojo
 mojo tests/test_hkt_demo.mojo
 ```
 
-## Project status
+## Bluesky demo integration
 
-- Focused demonstration of core ideas; not yet a production recommender stack.
-- The `ComputeTarget` abstraction is the current seam for backend lowering, including GPU-oriented compilation flows.
-
-
+A separate application demo is provided in `/bluesky` to show how an app imports this library and applies it to a social-media recommendation scenario.
