@@ -28,7 +28,7 @@ If Mojo is not installed, open a draft PR with code/docs and call out unverified
 
 ## Coding guidelines
 
-- Keep APIs conservative and additive.
+- Keep APIs stable and additive.
 - Preserve type-safety patterns in `KindTag`, `BayesianScore[K]`, and `HKTInferenceEngine[T]`.
 - Keep compile-target semantics explicit via `ComputeTarget`.
 - Use ASCII unless a file already requires Unicode.

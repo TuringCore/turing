@@ -1,6 +1,6 @@
 # AGENTS
 
-This file captures practical maintenance guidance for `turing` as a conservative probabilistic-programming library.
+This file captures practical maintenance guidance for `turing` as a focused probabilistic-programming library.
 
 ## Mission
 
@@ -16,7 +16,7 @@ Keep Bayesian inference building blocks simple, type-safe, and easy for multiple
 ## Stability principles
 
 - **Type safety first:** preserve `KindTag`, `BayesianScore[K]`, and `HKTInferenceEngine[T]` semantics.
-- **Conservative API evolution:** prefer additive changes and clear defaults.
+- **Incremental API evolution:** prefer additive changes and clear defaults.
 - **Predictable compilation:** keep `ComputeTarget` behavior explicit and documented.
 - **Small review surface:** choose simple abstractions over deep framework layering.
 

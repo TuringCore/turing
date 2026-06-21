@@ -4,26 +4,44 @@
 ![Language](https://img.shields.io/badge/language-Mojo-orange)
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-green)
 
-`/turing` is a focused Mojo library for conservative Bayesian probabilistic programming.
+`/turing` is a focused Mojo library for Bayesian probabilistic programming.
 
-The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, safe update semantics, and a compile seam that makes execution targets explicit.
+The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, stable update semantics, and a compile seam that makes execution targets explicit.
 
-## Why this library is conservative by design
+## Design goals
 
-- Large probabilistic systems become fragile when teams mix incompatible signals.
-- `KindTag` and `BayesianScore[K]` keep signal families separated at compile time.
-- `HKTInferenceEngine[T]` makes compute target selection explicit (`CPU`, `GPU`) without changing model math.
-- The API limits moving parts so contributors can add evidence updates without rewriting infrastructure.
+- Keep probabilistic interfaces simple enough to review and evolve.
+- Prevent incompatible signal composition before runtime.
+- Preserve model math while changing execution target.
+- Make integration points explicit for downstream applications.
 
-## Type system and Mojo compile system
+## HKT-inspired type design
 
-This project relies on both language-level typing and Mojo's compilation model:
+Mojo does not currently expose full higher-kinded-type syntax, so `turing` uses an HKT-inspired pattern to preserve the same safety intent.
 
-- **Type constraints:** `KindTag` and `BayesianScore[K]` prevent accidental cross-domain composition.
-- **Target specialization:** `HKTInferenceEngine[T]` binds behavior to a `ComputeTarget` at compile time.
-- **Compile seam:** `compile_kernel(...)` marks where typed probabilistic logic can lower to target-specific kernels.
+- `KindTag` is a type-level marker for semantic signal families.
+- `BayesianScore[K]` binds prior/evidence/posterior state to one kind `K`.
+- `HKTInferenceEngine[T]` binds inference behavior to one compute target `T`.
 
-Together, these controls reduce integration risk in multi-contributor model repos.
+### Why this matters in probabilistic systems
+
+Probabilistic pipelines are often assembled from many independent modules. If one module emits a trust signal and another expects a feature signal, wiring them together silently can create invalid posteriors. By expressing signal families in the type layer, invalid composition fails early during compile-time checking instead of becoming ranking drift in production.
+
+This mirrors the practical benefit of HKTs in Scala/Haskell: constraints apply to type constructors, not only concrete values.
+
+## Mojo compile-system rationale
+
+`HKTInferenceEngine[T]` uses generic specialization so target behavior is known at compile time:
+
+- `T` must satisfy `ComputeTarget`.
+- `CPU` and `GPU` implement the same target interface.
+- Engine methods are monomorphized for each instantiated target.
+
+That provides a predictable boundary between model semantics and lowering behavior:
+
+- `observe(...)` keeps Bayesian update semantics target-agnostic.
+- `target_label()` and `compile_kernel(...)` expose where target-specific compilation hooks live.
+- Downstream repos can select `CPU` or `GPU` by type argument without rewriting model logic.
 
 ## Practical applications
 
@@ -67,6 +85,8 @@ mojo examples/social_reco_demo.mojo
 mojo tests/test_hkt_demo.mojo
 ```
 
-## Bluesky demo integration
+## Bluesky example
 
-A separate application demo is provided in `/bluesky` to show how an app imports this library and applies it to a social-media recommendation scenario.
+Use the companion application demo for end-to-end usage and contributor workflow:
+
+https://github.com/TuringCore/bluesky

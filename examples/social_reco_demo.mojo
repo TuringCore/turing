@@ -3,7 +3,7 @@ from src.hkt_probprog import CPU, BayesianScore, FeatureSignal, GaussianPrior, H
 fn main() raises:
     let engine = HKTInferenceEngine[CPU]()
 
-    # Start from a conservative prior for a generic feature signal.
+    # Start from a baseline prior for a generic feature signal.
     var score = BayesianScore[FeatureSignal](
         GaussianPrior(mu=0.50, sigma=0.20),
         evidence_weight=0.0,
