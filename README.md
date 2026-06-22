@@ -46,8 +46,6 @@ That provides a predictable boundary between model semantics and lowering behavi
 
 ## Supported algorithm paths
 
-The library now includes execution paths modeled after commonly used workflows in Turing.jl, adapted to this lightweight scalar scoring design.
-
 - **MAP path (`run_map`)**
   - Uses deterministic confidence-scaled updates.
   - Useful for baseline ranking services, risk scoring, and low-variance online updates.
