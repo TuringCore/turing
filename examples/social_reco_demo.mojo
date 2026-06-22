@@ -1,4 +1,13 @@
-from src.hkt_probprog import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
+from src.hkt_probprog import (
+    CPU,
+    BayesianScore,
+    FeatureSignal,
+    GaussianPrior,
+    HKTInferenceEngine,
+    MAPPath,
+    Observation,
+    SMCPath,
+)
 
 fn main() raises:
     let engine = HKTInferenceEngine[CPU]()
@@ -9,9 +18,9 @@ fn main() raises:
         evidence_weight=0.0,
     )
 
-    # Apply a small sequence of confidence-weighted observations.
-    score = engine.observe(score, observed=0.70, confidence=0.60)
-    score = engine.observe(score, observed=0.40, confidence=0.30)
+    # Apply practical execution paths used by ranking systems.
+    score = engine.run_map(score, MAPPath(dampening=0.90), Observation(0.70, 0.60))
+    score = engine.run_smc(score, SMCPath(retention=0.70), Observation(0.40, 0.30))
 
     print("target:", engine.target_label())
     print("posterior_mean:", score.posterior_mean())

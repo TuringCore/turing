@@ -6,7 +6,7 @@
 
 `/turing` is a focused Mojo library for Bayesian probabilistic programming.
 
-The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, stable update semantics, and a compile seam that makes execution targets explicit.
+The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, stable update semantics, practical execution paths inspired by Turing.jl, and a compile seam that makes execution targets explicit.
 
 ## Design goals
 
@@ -40,8 +40,30 @@ This mirrors the practical benefit of HKTs in Scala/Haskell: constraints apply t
 That provides a predictable boundary between model semantics and lowering behavior:
 
 - `observe(...)` keeps Bayesian update semantics target-agnostic.
+- `run_map(...)`, `run_mh(...)`, `run_smc(...)`, and `run_vi(...)` provide practical algorithm execution paths over the same typed model state.
 - `target_label()` and `compile_kernel(...)` expose where target-specific compilation hooks live.
 - Downstream repos can select `CPU` or `GPU` by type argument without rewriting model logic.
+
+## Supported algorithm paths
+
+The library now includes execution paths modeled after commonly used workflows in Turing.jl, adapted to this lightweight scalar scoring design.
+
+- **MAP path (`run_map`)**
+  - Uses deterministic confidence-scaled updates.
+  - Useful for baseline ranking services, risk scoring, and low-variance online updates.
+- **Metropolis-Hastings path (`run_mh`)**
+  - Applies proposal updates with deterministic acceptance safeguards.
+  - Useful when teams need bounded uncertainty exploration without introducing heavy runtime complexity.
+- **Sequential Monte Carlo path (`run_smc`)**
+  - Retains weighted evidence with minimum-confidence safeguards.
+  - Useful for streaming operations where signals arrive continuously and confidence can fluctuate.
+- **Variational inference path (`run_vi`)**
+  - Uses discounted evidence and posterior blending for stable serving behavior.
+  - Useful for high-throughput systems where smooth online adaptation is preferred over noisy jumps.
+
+### Current scope vs full Turing.jl feature set
+
+This repo ports practical execution paths first. It does not yet implement full gradient-based samplers such as HMC/NUTS, blocked Gibbs schedules, or full ADVI diagnostics. Those require additional gradient, transform, and diagnostic infrastructure.
 
 ## Practical applications
 
@@ -55,9 +77,11 @@ The same pattern applies across domains where uncertainty-aware scoring matters:
 ## Repository contents
 
 - `src/hkt_probprog.mojo`: core library types and inference engine.
+- `examples/inference_paths_demo.mojo`: practical MAP/MH/SMC/VI execution path walkthrough.
 - `src/main.mojo`: minimal smoke demo for local verification.
 - `examples/social_reco_demo.mojo`: well-documented library usage example.
 - `tests/test_hkt_demo.mojo`: posterior update correctness test.
+- `tests/test_inference_paths.mojo`: deterministic checks for algorithm path behavior.
 
 ## Example
 
@@ -81,8 +105,10 @@ fn main() raises:
 
 ```zsh
 mojo src/main.mojo
+mojo examples/inference_paths_demo.mojo
 mojo examples/social_reco_demo.mojo
 mojo tests/test_hkt_demo.mojo
+mojo tests/test_inference_paths.mojo
 ```
 
 ## Bluesky example

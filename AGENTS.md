@@ -9,6 +9,7 @@ Keep Bayesian inference building blocks simple, type-safe, and easy for multiple
 ## Current boundaries
 
 - Library contracts live in `src/hkt_probprog.mojo`.
+- Practical algorithm paths (`run_map`, `run_mh`, `run_smc`, `run_vi`) also live in `src/hkt_probprog.mojo`.
 - Examples live in `examples/` and should stay short and educational.
 - Tests live in `tests/` and should focus on deterministic math checks.
 - Application behavior belongs in downstream repos that import `turing`.
@@ -29,7 +30,7 @@ Keep Bayesian inference building blocks simple, type-safe, and easy for multiple
 
 ## Near-term roadmap
 
-1. Expand distribution support with bounded, test-driven additions.
-2. Add stricter validation helpers for confidence/evidence inputs.
+1. Expand path diagnostics (acceptance statistics, effective sample-size proxies).
+2. Add bounded distribution support with test-driven additions.
 3. Improve compile-kernel metadata for downstream observability.
 4. Keep integrations in separate app repos (for example `/bluesky`).
