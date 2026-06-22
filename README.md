@@ -6,7 +6,7 @@
 
 `/turing` is a focused Mojo library for Bayesian probabilistic programming.
 
-The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, stable update semantics, practical execution paths inspired by Turing.jl, and a compile seam that makes execution targets explicit.
+The goal is to keep large-system inference manageable when multiple contributors add model insights over time. The library intentionally stays small: typed score containers, stable update semantics, practical execution paths, and a compile seam that makes execution targets explicit.
 
 ## Design goals
 
