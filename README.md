@@ -104,7 +104,6 @@ mojo examples/social_reco_demo.mojo
 mojo tests/test_hkt_demo.mojo
 mojo tests/test_inference_paths.mojo
 ```
-
 ## Bluesky example
 
 Use the companion application demo for end-to-end usage and contributor workflow:
