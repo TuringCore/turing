@@ -61,10 +61,6 @@ The library now includes execution paths modeled after commonly used workflows i
   - Uses discounted evidence and posterior blending for stable serving behavior.
   - Useful for high-throughput systems where smooth online adaptation is preferred over noisy jumps.
 
-### Current scope vs full Turing.jl feature set
-
-This repo ports practical execution paths first. It does not yet implement full gradient-based samplers such as HMC/NUTS, blocked Gibbs schedules, or full ADVI diagnostics. Those require additional gradient, transform, and diagnostic infrastructure.
-
 ## Practical applications
 
 The same pattern applies across domains where uncertainty-aware scoring matters:
