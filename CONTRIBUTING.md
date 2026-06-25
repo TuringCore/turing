@@ -6,7 +6,7 @@ Thanks for helping improve `turing`.
 
 `/turing` is a library-first repository. Prioritize:
 
-- Safe, typed probabilistic abstractions in `src/hkt_probprog.mojo`.
+- Safe, typed probabilistic abstractions in `src/turing/hkt_probprog.mojo` (exported via `src/turing/__init__.mojo`).
 - Small, clear examples in `examples/`.
 - Deterministic behavior checks in `tests/`.
 - Practical documentation updates in `README.md`.
@@ -19,9 +19,9 @@ Avoid broad application-specific logic here; put app behavior in consumer repos 
 2. From this repository root, run:
 
 ```zsh
-mojo src/main.mojo
-mojo examples/social_reco_demo.mojo
-mojo tests/test_hkt_demo.mojo
+mojo -I src src/main.mojo
+mojo -I src examples/social_reco_demo.mojo
+mojo -I src tests/test_hkt_demo.mojo
 ```
 
 If Mojo is not installed, open a draft PR with code/docs and call out unverified runtime behavior.

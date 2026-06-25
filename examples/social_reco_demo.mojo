@@ -1,4 +1,4 @@
-from src.hkt_probprog import (
+from turing import (
     CPU,
     BayesianScore,
     FeatureSignal,

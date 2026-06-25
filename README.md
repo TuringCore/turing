@@ -70,7 +70,8 @@ The same pattern applies across domains where uncertainty-aware scoring matters:
 
 ## Repository contents
 
-- `src/hkt_probprog.mojo`: core library types and inference engine.
+- `src/turing/hkt_probprog.mojo`: core library types and inference engine.
+- `src/turing/__init__.mojo`: canonical package API surface for downstream imports.
 - `examples/inference_paths_demo.mojo`: practical MAP/MH/SMC/VI execution path walkthrough.
 - `src/main.mojo`: minimal smoke demo for local verification.
 - `examples/social_reco_demo.mojo`: well-documented library usage example.
@@ -80,7 +81,7 @@ The same pattern applies across domains where uncertainty-aware scoring matters:
 ## Example
 
 ```mojo
-from src.hkt_probprog import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
+from turing import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
 
 fn main() raises:
     let engine = HKTInferenceEngine[CPU]()
@@ -98,11 +99,11 @@ fn main() raises:
 ## Quick start
 
 ```zsh
-mojo src/main.mojo
-mojo examples/inference_paths_demo.mojo
-mojo examples/social_reco_demo.mojo
-mojo tests/test_hkt_demo.mojo
-mojo tests/test_inference_paths.mojo
+mojo -I src src/main.mojo
+mojo -I src examples/inference_paths_demo.mojo
+mojo -I src examples/social_reco_demo.mojo
+mojo -I src tests/test_hkt_demo.mojo
+mojo -I src tests/test_inference_paths.mojo
 ```
 ## Bluesky example
 

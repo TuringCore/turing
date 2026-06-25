@@ -1,4 +1,4 @@
-from src.hkt_probprog import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
+from turing import CPU, BayesianScore, FeatureSignal, GaussianPrior, HKTInferenceEngine
 
 fn assert_close(lhs: Float64, rhs: Float64, eps: Float64 = 1e-9) raises:
     let diff = lhs - rhs

@@ -8,8 +8,8 @@ Keep Bayesian inference building blocks simple, type-safe, and easy for multiple
 
 ## Current boundaries
 
-- Library contracts live in `src/hkt_probprog.mojo`.
-- Practical algorithm paths (`run_map`, `run_mh`, `run_smc`, `run_vi`) also live in `src/hkt_probprog.mojo`.
+- Library contracts live in `src/turing/hkt_probprog.mojo` and are exported via `src/turing/__init__.mojo`.
+- Practical algorithm paths (`run_map`, `run_mh`, `run_smc`, `run_vi`) also live in `src/turing/hkt_probprog.mojo`.
 - Examples live in `examples/` and should stay short and educational.
 - Tests live in `tests/` and should focus on deterministic math checks.
 - Application behavior belongs in downstream repos that import `turing`.
